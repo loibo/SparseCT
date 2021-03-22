@@ -1,19 +1,9 @@
-import numpy as np
-import matplotlib.pyplot as plt
-import scipy
-import skimage
-
 from pyellipsoid import drawing
-
-import visualization
 
 # ellipsoid dataset (2000 grayscale images 512x512, normalized in 0-1)
 
-import matplotlib.pyplot as plt
 import numpy as np
-import cv2 as cv
 import random
-import pickle
 
 
 def add_ellipse(fig, center_range=(100, 100, 10), axes_range=(30, 30, 3)):
