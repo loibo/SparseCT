@@ -3,9 +3,12 @@ import matplotlib.pyplot as plt
 
 
 def show3d(img):
-    # Takes as input an image of shape (H, W, D) and shows it slice by slice, in an image matrix of dimension
-    # 5 x (D // 5)
+    """
+    Takes as input an image of shape (H, W, D) and shows it slice by slice, in an image matrix of dimension 5 x (D // 5).
 
+    :param img: ndarray, the image
+    :return: None
+    """
     img = np.transpose(img, (2, 1, 0))
     d = img.shape[0]
 

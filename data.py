@@ -7,6 +7,20 @@ import random
 
 
 def add_ellipse(fig, center_range=(100, 100, 10), axes_range=(30, 30, 3)):
+    """
+    Add an ellipse to fig. The ellipse will be centered in a random value in the range:
+    [center_range, dim - center_range]
+    and will have axes of dimension in the range:
+    [axes_range, 2 * axes_range]
+    The ellipse will be rotated of a random angle between 0 and 90 degrees in each dimension and the opacity will be in
+    the range [0, 1].
+    If two ellipses overlaps, only the more opaque will be shown in the overlapping.
+
+    :param fig: ndarray, an array that contains the figure
+    :param center_range: list or tuple, a list of length 3 that contains the range of the centers in each dimensions (x, y, z)
+    :param axes_range: list or tuple, a list of length 3 that contains the range of the axes in each dimensions (x, y, z)
+    :return: ndarray, an array that contains the figure
+    """
     H, W, D = fig.shape
 
     ell_center = (random.randrange(center_range[0], H - center_range[0]),
@@ -30,6 +44,17 @@ def add_ellipse(fig, center_range=(100, 100, 10), axes_range=(30, 30, 3)):
 
 
 def add_circle(fig, center_range=(100, 100, 10)):
+    """
+    Add a point to fig. The point will be centered in a random value in the range:
+    [center_range, dim - center_range]
+    and will have axes of dimension:
+    [3, 3, 3]
+    The opacity will be 0.9.
+
+    :param fig: ndarray, an array that contains the figure
+    :param center_range: list or tuple, a list of length 3 that contains the range of the centers in each dimensions (x, y, z)
+    :return: ndarray, an array that contains the figure
+    """
     H, W, D = fig.shape
 
     point_center = (random.randrange(center_range[0], H - center_range[0]),
@@ -48,6 +73,18 @@ def add_circle(fig, center_range=(100, 100, 10)):
 
 
 def add_line(fig, center_range=(100, 100, 10), length_range=80):
+    """
+    Add a line segment to fig. The line segment will be centered in a random value in the range:
+    [center_range, dim - center_range]
+    and will have a length in the range:
+    [length_range, 2 * length_range]
+    The line segment will be rotated of a random angle between 0 and 90 degrees in each dimension and the opacity will be 0.9.
+
+    :param fig: ndarray, an array that contains the figure
+    :param center_range: list or tuple, a list of length 3 that contains the range of the centers in each dimensions (x, y, z)
+    :param length_range: int, the range of the length for the line segment
+    :return: ndarray, an array that contains the figure
+    """
     H, W, D = fig.shape
 
     line_center = (random.randrange(center_range[0], H - center_range[0]),
@@ -67,6 +104,15 @@ def add_line(fig, center_range=(100, 100, 10), length_range=80):
 
 
 def unify(fig, overlay, opacity):
+    """
+    A utility function that unifies two images with the condition that if two part of the images overlaps, only the more
+    opaque will be shown.
+
+    :param fig: ndarray, an array that contains the first figure
+    :param overlay: fig: ndarray, an array that contains the second figure
+    :param opacity: int, the opacity of the second image
+    :return: ndarray, an array that contains the figure
+    """
     H, W, D = fig.shape
 
     fig[overlay >= fig] = overlay[overlay >= fig] * opacity
@@ -74,6 +120,11 @@ def unify(fig, overlay, opacity):
 
 
 def get_data():
+    """
+    Create the dataset. The parameters are defined in the code.
+
+    :return: ndarray, an array of dimension (N, H, W, D) that contains the dataset.
+    """
     N, H, W, D = 3, 512, 512, 32  # Shape of the dataset.
     N_ell = 10  # Number of ellipses in each image.
     N_circle = 15 # Number of circles of opacity 0.9.
@@ -109,14 +160,36 @@ def get_data():
 
 
 def to_npz(data, PATH='./'):
+    """
+    Create a .npz file that contains data into PATH with the name ellipsoid_dataset.npz
+
+    :param data: ndarray, the file containing the dataset
+    :param PATH: str, the PATH in where the file will be saved
+    :return: None
+    """
     np.savez(PATH + 'ellipsoid_dataset.npz', data)
 
 
 def to_np(data, PATH='./'):
+    """
+    Create a .npy file that contains data into PATH with the name ellipsoid_dataset.npz
+
+    :param data: ndarray, the file containing the dataset
+    :param PATH: str, the PATH in where the file will be saved
+    :return: None
+    """
     np.save(PATH + 'ellipsoid_dataset.npy', data)
 
 
 def to_tif(data, PATH='./'):
+    """
+    Create a .tif file for each element of data in PATH. The name of each .tif file will be ellipsoid:dataset_i.tif where
+    i is an increasing counter.
+
+    :param data: ndarray, the file containing the dataset
+    :param PATH: str, the PATH in where the file will be saved
+    :return: None
+    """
     import tifffile as tif
     for i in range(data.shape[0]):
         tif.imsave(PATH + 'ellipsoid_dataset_'+ str(i) + '.tif', np.transpose(data[0], (2, 0, 1)))
