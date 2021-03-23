@@ -33,7 +33,7 @@ def add_ellipse(fig, center_range=(100, 100, 10), axes_range=(30, 30, 3)):
 
     ell_angle = np.deg2rad([random.randrange(90), random.randrange(90), random.randrange(90)])
 
-    ell_opacity = random.random()
+    ell_opacity = random.random() * 0.9
 
     overlay = drawing.make_ellipsoid_image((D, W, H), ell_center, ell_axes, ell_angle)
     overlay = np.transpose(overlay, (2, 1, 0))
