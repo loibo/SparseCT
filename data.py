@@ -160,7 +160,7 @@ def get_data():
 
     :return: ndarray, an array of dimension (N, H, W, D) that contains the dataset.
     """
-    N, H, W, D = 1, 512, 512, 32  # Shape of the dataset.
+    N, H, W, D = 30, 512, 512, 32  # Shape of the dataset.
     center_range = (30, 30, 5)  # Possible centers of the ellipses: (c_range, dim - c_range)
     axes_range = (50, 20, 10)  # Possible radius of the ellipses: (r_range, 100 - r_range)
 

@@ -14,15 +14,7 @@ if not LOAD:
     ellipsoid_data = data.get_data()
     data.to_tif(ellipsoid_data, PATH)
     data.to_tif(ellipsoid_data, PATH, type='parallel')
+    data.to_np(ellipsoid_data, PATH)
 else:
     ellipsoid_data = np.load(PATH + 'ellipsoid_dataset.npy')
     print(ellipsoid_data.shape)
-
-"""
-img = ellipsoid_data[0]
-img = np.transpose(img, (2, 0, 1))
-print(img.shape)
-s = transform.img_to_sino(img)
-s_noise = transform.add_noise_to_sino(s, sigma=0.1)
-img_recon = transform.sino_to_img(s_noise, (32, 512, 512))
-"""
