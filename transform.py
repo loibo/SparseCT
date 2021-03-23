@@ -55,7 +55,7 @@ def sino_to_img(s, volume_shape, alg='FDK_CUDA', iter_no=1):
     # hor. and ver. spacing between adjacent pixels in the detector surface
     det_spacing_x = 1
     det_spacing_y = 1
-    det_dims = (512, 512)
+    det_dims = (724, 724)
 
     # angles at which projections will be taken
     proj_amplitude = 100
