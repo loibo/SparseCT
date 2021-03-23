@@ -100,10 +100,10 @@ def get_proj_angle(starting_angle, end_angle, proj_no):
 def get_volume_geom(volume_data):
     """
     Returns a volume object from AstraToolbox
-    :param volume_data: ndarray, an array that contains the image data
+    :param volume_data: ndarray, an array that contains the image data (32, 512, 512)
     :return: (int, astra_volume), the id of the volume object and the object itself
     """
-    vol_geom = astra.creators.create_vol_geom(volume_data.shape[1], volume_data.shape[2], volume_data.shape[0])
+    vol_geom = astra.creators.create_vol_geom(volume_data.shape[1], volume_data.shape[0], volume_data.shape[2])
     obj_id = astra.data3d.create('-vol', vol_geom, data=volume_data)
     return obj_id, vol_geom
 
@@ -150,7 +150,7 @@ def get_dims_from_phantom(phantom):
     shape_arr.flatten()
     dims = np.around(shape_arr[0] * np.sqrt(2))
 
-    return int(dims[0]), int(dims[1])
+    return int(dims[1]), int(dims[2])
 
 
 def add_noise_to_sino(s, sigma, type="Gaussian"):
@@ -173,7 +173,7 @@ def add_noise_to_sino(s, sigma, type="Gaussian"):
 
 def get_dims_from_projection(proj):
     """
-    Get det_dim from the projection
+    Get det_dim from the projection (724, 101, 724)
 
     :param proj: ndarray, an array that contains the projection data
     :return: tuple, a tuple with the dimension of the detector
