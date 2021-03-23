@@ -27,9 +27,9 @@ def add_ellipse(fig, center_range=(100, 100, 10), axes_range=(30, 30, 3)):
                   random.randrange(center_range[1], W - center_range[1]),
                   random.randrange(center_range[2], D - center_range[2]))
 
-    ell_axes = (random.randrange(axes_range[0], 2*axes_range[0]),
-                random.randrange(axes_range[1], 2*axes_range[1]),
-                random.randrange(axes_range[2], 2*axes_range[2]))
+    ell_axes = (random.randrange(axes_range[0], 3*axes_range[0]),
+                random.randrange(axes_range[1], 3*axes_range[1]),
+                random.randrange(axes_range[2], 3*axes_range[2]))
 
     ell_angle = np.deg2rad([random.randrange(90), random.randrange(90), random.randrange(90)])
 
@@ -43,7 +43,7 @@ def add_ellipse(fig, center_range=(100, 100, 10), axes_range=(30, 30, 3)):
     return fig, ell_center
 
 
-def add_circle(fig, center_range=(100, 100, 10)):
+def add_circle(fig, center_range=(100, 100, 10), r=3):
     """
     Add a point to fig. The point will be centered in a random value in the range:
     [center_range, dim - center_range]
@@ -60,7 +60,7 @@ def add_circle(fig, center_range=(100, 100, 10)):
     point_center = (random.randrange(center_range[0], H - center_range[0]),
                     random.randrange(center_range[1], W - center_range[1]),
                     random.randrange(center_range[2], D - center_range[2]))
-    point_axes = (3, 3, 3)
+    point_axes = (r, r, r)
     point_angle = (0, 0, 0)
     point_opacity = 0.9
 
@@ -92,7 +92,7 @@ def add_line(fig, center_range=(100, 100, 10), length_range=80):
                   random.randrange(center_range[2], D - center_range[2]))
 
     line_axes = (random.randrange(length_range, 2*length_range), 1, 1)
-    line_angle = np.deg2rad([random.randrange(90), random.randrange(90), random.randrange(90)])
+    line_angle = np.deg2rad([0, random.randrange(90), 0])
     line_opacity = 0.9
 
     overlay = drawing.make_ellipsoid_image((D, W, H), line_center, line_axes, line_angle)
@@ -160,18 +160,19 @@ def get_data():
 
     :return: ndarray, an array of dimension (N, H, W, D) that contains the dataset.
     """
-    N, H, W, D = 3, 512, 512, 32  # Shape of the dataset.
-    N_ell = 10  # Number of ellipses in each image.
-    N_circle = 15 # Number of circles of opacity 0.9.
-    N_lines = 10 # Number of lines of opacity 0.9
-    N_centered_ellipses = 4 # Number of centered ellipses in each image.
-    center_range = (50, 50, 0)  # Possible centers of the ellipses: (c_range, dim - c_range)
-    axes_range = (100, 50, 30)  # Possible radius of the ellipses: (r_range, 100 - r_range)
+    N, H, W, D = 1, 512, 512, 32  # Shape of the dataset.
+    center_range = (30, 30, 5)  # Possible centers of the ellipses: (c_range, dim - c_range)
+    axes_range = (50, 20, 10)  # Possible radius of the ellipses: (r_range, 100 - r_range)
 
     ellipsoid_dataset = np.empty((N, H, W, D), dtype=np.float32)
     ell_centers = list()
 
     for i in range(N):
+        N_ell = random.randint(1, 5) + 15  # Number of ellipses in each image.
+        N_circle = random.randint(1, 5) + 15  # Number of circles of opacity 0.9.
+        N_lines = random.randint(1, 5) + 5  # Number of lines of opacity 0.9
+        N_centered_ellipses = random.randint(1, N_ell)  # Number of centered ellipses in each image.
+
         print('Drawing the ', str(i), '-th Ellipsoid', end='')
         fig = np.zeros((H, W, D))
 
@@ -182,7 +183,8 @@ def get_data():
         print('/', end='')
 
         for n_circle in range(N_circle):
-            fig, point_center = add_circle(fig, center_range)
+            circle_radius = random.randint(3, 8)
+            fig, point_center = add_circle(fig, center_range, circle_radius)
             print('.', end='')
         print('/', end='')
 
@@ -195,7 +197,7 @@ def get_data():
             fig = add_concentric_ellipse(fig, ell_centers[n_centered_ellipses])
             print('.', end='')
 
-        fig = fig / fig.max()
+        # fig = fig / fig.max()
         ellipsoid_dataset[i, :, :, :] = fig
         print('')
 
@@ -224,9 +226,9 @@ def to_np(data, PATH='./'):
     np.save(PATH + 'ellipsoid_dataset.npy', data)
 
 
-def to_tif(data, PATH='./'):
+def to_tif(data, PATH='./', type='perpendicular'):
     """
-    Create a .tif file for each element of data in PATH. The name of each .tif file will be ellipsoid:dataset_i.tif where
+    Create a .tif file for each element of data in PATH. The name of each .tif file will be ellipsoid_dataset_i.tif where
     i is an increasing counter.
 
     :param data: ndarray, the file containing the dataset
@@ -235,4 +237,7 @@ def to_tif(data, PATH='./'):
     """
     import tifffile as tif
     for i in range(data.shape[0]):
-        tif.imsave(PATH + 'ellipsoid_dataset_'+ str(i) + '.tif', np.transpose(data[0], (2, 0, 1)))
+        if type == 'perpendicular':
+            tif.imsave(PATH + 'ellipsoid_dataset_'+ str(i) + '.tif', np.transpose(data[i], (2, 0, 1)))
+        elif type == 'parallel':
+            tif.imsave(PATH + 'ellipsoid_dataset_' + str(i) + '_parallel.tif', np.transpose(data[i], (1, 0, 2)))
