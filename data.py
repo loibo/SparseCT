@@ -40,7 +40,7 @@ def add_ellipse(fig, center_range=(100, 100, 10), axes_range=(30, 30, 3)):
     overlay = overlay.astype('float32')
 
     fig = unify(fig, overlay, ell_opacity)
-    return fig
+    return fig, ell_center
 
 
 def add_circle(fig, center_range=(100, 100, 10)):
@@ -69,7 +69,7 @@ def add_circle(fig, center_range=(100, 100, 10)):
     overlay = overlay.astype('float32')
 
     fig = unify(fig, overlay, point_opacity)
-    return fig
+    return fig, point_center
 
 
 def add_line(fig, center_range=(100, 100, 10), length_range=80):
@@ -100,6 +100,41 @@ def add_line(fig, center_range=(100, 100, 10), length_range=80):
     overlay = overlay.astype('float32')
 
     fig = unify(fig, overlay, line_opacity)
+    return fig, line_center
+
+
+def add_concentric_ellipse(fig, center, axes_range=(10, 10, 3)):
+    """
+    Add an ellipse to fig. The ellipse will be centered in a random value in the range:
+    [center_range, dim - center_range]
+    and will have axes of dimension in the range:
+    [axes_range, 2 * axes_range]
+    The ellipse will be rotated of a random angle between 0 and 90 degrees in each dimension and the opacity will be in
+    the range [0, 1].
+    If two ellipses overlaps, only the more opaque will be shown in the overlapping.
+
+    :param fig: ndarray, an array that contains the figure
+    :param center: list or tuple, a list of length 3 that contains the range of the centers in each dimensions (x, y, z)
+    :param axes_range: list or tuple, a list of length 3 that contains the range of the axes in each dimensions (x, y, z)
+    :return: ndarray, an array that contains the figure
+    """
+    H, W, D = fig.shape
+
+    ell_center = center
+
+    ell_axes = (random.randrange(axes_range[0], 2*axes_range[0]),
+                random.randrange(axes_range[1], 2*axes_range[1]),
+                random.randrange(axes_range[2], 2*axes_range[2]))
+
+    ell_angle = np.deg2rad([random.randrange(90), random.randrange(90), random.randrange(90)])
+
+    ell_opacity = (random.random() + 1) * 0.5
+
+    overlay = drawing.make_ellipsoid_image((D, W, H), ell_center, ell_axes, ell_angle)
+    overlay = np.transpose(overlay, (2, 1, 0))
+    overlay = overlay.astype('float32')
+
+    fig = unify(fig, overlay, ell_opacity)
     return fig
 
 
@@ -129,27 +164,35 @@ def get_data():
     N_ell = 10  # Number of ellipses in each image.
     N_circle = 15 # Number of circles of opacity 0.9.
     N_lines = 10 # Number of lines of opacity 0.9
+    N_centered_ellipses = 4 # Number of centered ellipses in each image.
     center_range = (50, 50, 0)  # Possible centers of the ellipses: (c_range, dim - c_range)
     axes_range = (100, 50, 30)  # Possible radius of the ellipses: (r_range, 100 - r_range)
 
     ellipsoid_dataset = np.empty((N, H, W, D), dtype=np.float32)
+    ell_centers = list()
 
     for i in range(N):
         print('Drawing the ', str(i), '-th Ellipsoid', end='')
         fig = np.zeros((H, W, D))
 
         for n_ell in range(N_ell):
-            fig = add_ellipse(fig, center_range, axes_range)
+            fig, ell_center = add_ellipse(fig, center_range, axes_range)
+            ell_centers.append(ell_center)
             print('.', end='')
         print('/', end='')
 
         for n_circle in range(N_circle):
-            fig = add_circle(fig, center_range)
+            fig, point_center = add_circle(fig, center_range)
             print('.', end='')
         print('/', end='')
 
         for n_line in range(N_lines):
-            fig = add_line(fig)
+            fig, line_center = add_line(fig)
+            print('.', end='')
+        print('/', end='')
+
+        for n_centered_ellipses in range(N_centered_ellipses):
+            fig = add_concentric_ellipse(fig, ell_centers[n_centered_ellipses])
             print('.', end='')
 
         fig = fig / fig.max()
