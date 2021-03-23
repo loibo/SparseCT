@@ -55,7 +55,7 @@ def sino_to_img(s, volume_shape, alg='FDK_CUDA', iter_no=1):
     # hor. and ver. spacing between adjacent pixels in the detector surface
     det_spacing_x = 1
     det_spacing_y = 1
-    det_dims = get_dims_from_projection(s)
+    det_dims = (512, 512)
 
     # angles at which projections will be taken
     proj_amplitude = 100
@@ -163,9 +163,7 @@ def add_noise_to_sino(s, sigma, type="Gaussian"):
     :return: ndarray, corrupted sinogram with the same dimension of s
     """
     if type == "Gaussian":
-        eta = np.random.normal(size=s.shape)
-        eta /= np.linalg.norm(eta, 'fro')
-        eta *= sigma * np.linalg.norm(s, 'fro')
+        eta = np.random.normal(size=s.shape, scale=sigma)
     else:
         eta = 0
         print('Noise type not found. No noise added to img.')
