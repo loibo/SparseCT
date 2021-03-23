@@ -7,3 +7,7 @@ Unfortunately, the functions that projects and backprojects the dataset needs th
 To help visualization, it is possible to use functions in visualize.py, where the data is again supposed to be (N, h, w, t).
 
 The data can be save in .npy, .npz, .tif, and the code for AstraToolbox now works only image-per-image.
+
+---
+
+An example on how to use the functions is in the file main.py.
