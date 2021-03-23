@@ -19,6 +19,21 @@ else:
 
 img = ellipsoid_data[0]
 s = transform.img_to_sino(img)
-print(s.shape)
+s_noise = transform.add_noise_to_sino(s, sigma=0.1)
+img_recon = transform.sino_to_img(s_noise)
+
+angles = transform.get_proj_angle()
+
+# get projection geometry
+proj_geom = astra.create_proj_geom('cone', det_spacing_x, det_spacing_y,
+                                   det_row_count, det_col_count, angles,
+                                   src_orig_dist, orig_det_dist)
+proj_id = astra.data3d.create('-sino', proj_geom, projection)
+
+# get the volume geometry
+vol_geom = (64, 512, 512)
+
+# FDK RECONSTRUCTION
+reconstruction = reconstruct(proj_id, vol_geom)
 
 
