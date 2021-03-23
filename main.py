@@ -18,6 +18,8 @@ else:
     print(ellipsoid_data.shape)
 
 img = ellipsoid_data[0]
+img = np.transpose(img, (2, 0, 1))
+print(img.shape)
 s = transform.img_to_sino(img)
 s_noise = transform.add_noise_to_sino(s, sigma=0.1)
 img_recon = transform.sino_to_img(s_noise, (32, 512, 512))

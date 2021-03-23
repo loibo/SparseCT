@@ -34,7 +34,6 @@ def img_to_sino(img):
     # compute projections
     print('Calculating Projections..')
     obj_id, vol_geom = get_volume_geom(img)
-
     # get sinograms performing the backprojection
     s = project(obj_id, vol_geom, proj_geom)
 
@@ -69,7 +68,7 @@ def sino_to_img(s, volume_shape, alg='FDK_CUDA', iter_no=1):
     proj_id = get_sinogram(s, proj_geom)
 
     # instantiate volume shapes
-    rec_vol_geom = astra.creators.create_vol_geom(volume_shape[1], volume_shape[0], volume_shape[2])
+    rec_vol_geom = astra.creators.create_vol_geom(volume_shape[1], volume_shape[2], volume_shape[0])
     rec_vol_id = astra.data3d.create('-vol', rec_vol_geom, data=0)
 
     # reconstruction algorithm configurations
@@ -103,7 +102,7 @@ def get_volume_geom(volume_data):
     :param volume_data: ndarray, an array that contains the image data (32, 512, 512)
     :return: (int, astra_volume), the id of the volume object and the object itself
     """
-    vol_geom = astra.creators.create_vol_geom(512, 32, 512)
+    vol_geom = astra.creators.create_vol_geom(volume_data.shape[1], volume_data.shape[2], volume_data.shape[0])
     obj_id = astra.data3d.create('-vol', vol_geom, data=volume_data)
     return obj_id, vol_geom
 
