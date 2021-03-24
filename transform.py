@@ -155,9 +155,7 @@ def get_dims_from_phantom(phantom):
     :return: tuple, a tuple that contains the dimension of the detector
     """
     phantom_shape = phantom.shape
-    dims = np.around(phantom_shape[1:] * np.sqrt(2))
-
-    return int(dims[0]), int(dims[1])
+    return int(phantom_shape[1]*np.sqrt(2)), int(phantom_shape[2]*np.sqrt(2))
 
 
 def add_noise_to_sino(s, sigma, type="Gaussian"):
