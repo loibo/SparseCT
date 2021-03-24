@@ -154,13 +154,13 @@ def unify(fig, overlay, opacity):
     return fig
 
 
-def get_data(N=30):
+def get_data(input_shape=(30, 512, 512, 32)):
     """
     Create the dataset. The parameters are defined in the code.
 
     :return: ndarray, an array of dimension (N, H, W, D) that contains the dataset.
     """
-    H, W, D = 512, 512, 32  # Shape of the dataset.
+    N, H, W, D = input_shape  # Shape of the dataset.
     center_range = (30, 30, 5)  # Possible centers of the ellipses: (c_range, dim - c_range)
     axes_range = (50, 20, 10)  # Possible radius of the ellipses: (r_range, 100 - r_range)
 
