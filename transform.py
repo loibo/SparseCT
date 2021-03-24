@@ -13,8 +13,14 @@ def img_to_sino(img):
     Computes the projection of img, transformed with the cone-beam geometry and angles theta. The parameters are defined
     in the code.
 
-    :param img: ndarray, the input image of dimension (H, W, D)
-    :return: ndarray, the projection of img of dimension (Hs, Ws, Ds)
+    We assume that 1 unit length (the dimension of a side of each voxel) is equivalent to 100 micron. So, if we take the
+    detector to have det_spacing_x = det_spacing_y = 1, we have the same accuracy for both the volume and the detector.
+
+    Usually the detector is around 6cm = 600 unit length far from the origin, while the source is 70cm = 7000 unit length
+    far from the origin.
+
+    :param img: ndarray, the input image of dimension (T, X, Y)
+    :return: ndarray, the projection of img of dimension (N_t, x, y)
     """
     # hor. and ver. spacing between adjacent pixels in the detector surface
     det_spacing_x = 1
@@ -22,18 +28,20 @@ def img_to_sino(img):
     det_dims = get_dims_from_phantom(img)
 
     # angles at which projections will be taken
-    proj_amplitude = 100
+    start_angle = -50 # in degrees
+    end_angle = 50    # in degrees
     proj_no = 101
-    angles = get_proj_angle(-50, proj_amplitude, proj_no)
+    angles = get_proj_angle(start_angle, end_angle, proj_no) # in radians
 
     # distance between source-origin/origin detector
-    src_orig_dist = 1000
-    orig_det_dist = 10
-    proj_geom = get_projection_geom(angles, det_dims, det_spacing_x, det_spacing_y, src_orig_dist, orig_det_dist)
+    src_orig_dist = 7000  # 70cm
+    det_orig_dist = 600   # 6cm
+    proj_geom = get_projection_geom(angles, det_dims, det_spacing_x, det_spacing_y, src_orig_dist, det_orig_dist)
 
     # compute projections
     print('Calculating Projections..')
     obj_id, vol_geom = get_volume_geom(img)
+
     # get sinograms performing the backprojection
     s = project(obj_id, vol_geom, proj_geom)
 
@@ -57,14 +65,15 @@ def sino_to_img(s, volume_shape, alg='FDK_CUDA', iter_no=1):
     det_dims = get_dims_from_projection(s)
 
     # angles at which projections will be taken
-    proj_amplitude = 100
+    start_angle = -50 # in degrees
+    end_angle = 50    # in degrees
     proj_no = 101
-    angles = get_proj_angle(-50, proj_amplitude, proj_no)
+    angles = get_proj_angle(start_angle, end_angle, proj_no) # in radians
 
     # distance between source-origin/origin detector
-    src_orig_dist = 1000
-    orig_det_dist = 10
-    proj_geom = get_projection_geom(angles, det_dims, det_spacing_x, det_spacing_y, src_orig_dist, orig_det_dist)
+    src_orig_dist = 7000  # 70cm
+    det_orig_dist = 600   # 6cm
+    proj_geom = get_projection_geom(angles, det_dims, det_spacing_x, det_spacing_y, src_orig_dist, det_orig_dist)
     proj_id = get_sinogram(s, proj_geom)
 
     # instantiate volume shapes
@@ -142,14 +151,13 @@ def get_dims_from_phantom(phantom):
     """
     Compute the value of det_dims from a phantom data.
 
-    :param phantom: ndarray, an array that contains the phantom image.
+    :param phantom: ndarray, an array that contains the phantom image. (T, X, Y)
     :return: tuple, a tuple that contains the dimension of the detector
     """
-    shape_arr = np.array([phantom.shape])
-    shape_arr.flatten()
-    dims = np.around(shape_arr[0] * np.sqrt(2))
+    phantom_shape = phantom.shape
+    dims = np.around(phantom_shape[1:] * np.sqrt(2))
 
-    return int(dims[1]), int(dims[2])
+    return int(dims[0]), int(dims[1])
 
 
 def add_noise_to_sino(s, sigma, type="Gaussian"):
