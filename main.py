@@ -8,7 +8,7 @@ This file contains an example on how to generate the dataset from the functions 
 """
 
 PATH = './SparseCT/'
-LOAD = False
+LOAD = True
 
 if not LOAD:
     ellipsoid_data = data.get_data((1, 450, 600, 32))
