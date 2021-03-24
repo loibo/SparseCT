@@ -111,8 +111,7 @@ def get_volume_geom(volume_data):
     :param volume_data: ndarray, an array that contains the image data (32, 512, 512)
     :return: (int, astra_volume), the id of the volume object and the object itself
     """
-    vol_geom = astra.creators.create_vol_geom(volume_data.shape[0], volume_data.shape[1], volume_data.shape[2]) # (32, 450, 600)
-    volume_data = np.transpose(volume_data, (2, 0, 1))
+    vol_geom = astra.creators.create_vol_geom(volume_data.shape[1], volume_data.shape[2], volume_data.shape[0])
     obj_id = astra.data3d.create('-vol', vol_geom, data=volume_data)
     return obj_id, vol_geom
 
@@ -156,7 +155,7 @@ def get_dims_from_phantom(phantom):
     :return: tuple, a tuple that contains the dimension of the detector
     """
     phantom_shape = phantom.shape
-    return int(phantom_shape[2]*np.sqrt(2)), int(phantom_shape[1]*np.sqrt(2))
+    return int(phantom_shape[1]*np.sqrt(2)), int(phantom_shape[2]*np.sqrt(2))
 
 
 def add_noise_to_sino(s, sigma, type="Gaussian"):
