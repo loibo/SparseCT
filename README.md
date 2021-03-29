@@ -9,5 +9,13 @@ To help visualization, it is possible to use functions in visualize.py, where th
 
 The data can be save in .npy, .npz, .tif, and the code for AstraToolbox now works only image-per-image.
 
+## Geometry
+
+Rotation Axis: z 
+
+Source starts on the plane: xz
+
+Data dimensionality should be: (x, y, z) = (256, 32, 256)
+
 ## Examples
 An example on how to use the functions is in the file main.py.

@@ -17,6 +17,10 @@ if not LOAD:
     data.to_np(ellipsoid_data, PATH)
 else:
     ellipsoid_data = np.load(PATH + 'ellipsoid_dataset.npy')
-    print(ellipsoid_data.shape)
+    # print(ellipsoid_data.shape)
 
-s = transform.img_to_sino(np.transpose(ellipsoid_data[0], (2, 0, 1)))
+img = ellipsoid_data[0]
+astra_img = np.transpose(img, (1, 2, 0)) # (x, y, z) = (600, 32, 450)
+print('Data Shape:', astra_img.shape)
+
+obj_id, vol_geom = transform.get_volume_geom(astra_img)
