@@ -8,7 +8,7 @@ import time
 import matplotlib.pyplot as plt
 
 
-def img_to_sino(img):
+def img_to_sino(img, nx, ny, nz):
     """
     Computes the projection of img, transformed with the cone-beam geometry and angles theta. The parameters are defined
     in the code.
@@ -40,7 +40,7 @@ def img_to_sino(img):
 
     # compute projections
     print('Calculating Projections..')
-    obj_id, vol_geom = get_volume_geom(img)
+    obj_id, vol_geom = get_volume_geom(img, nx, ny, nz)
 
     # get sinograms performing the backprojection
     s = project(obj_id, vol_geom, proj_geom)
@@ -105,13 +105,13 @@ def get_proj_angle(starting_angle, end_angle, proj_no):
     return np.deg2rad(angles)
 
 
-def get_volume_geom(volume_data):
+def get_volume_geom(volume_data, nx, ny, nz):
     """
     Returns a volume object from AstraToolbox
     :param volume_data: ndarray, an array that contains the image data (32, 512, 512)
     :return: (int, astra_volume), the id of the volume object and the object itself
     """
-    vol_geom = astra.creators.create_vol_geom(32, 450, 600)
+    vol_geom = astra.creators.create_vol_geom(nx, ny, nz)
     obj_id = astra.data3d.create('-vol', vol_geom, data=volume_data)
     return obj_id, vol_geom
 
