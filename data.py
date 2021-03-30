@@ -91,8 +91,8 @@ def add_line(fig, center_range=(100, 100, 10), length_range=80):
                   random.randrange(center_range[1], W - center_range[1]),
                   random.randrange(center_range[2], D - center_range[2]))
 
-    line_axes = (random.randrange(length_range, 2*length_range), 1, 1)
-    line_angle = np.deg2rad([0, random.randrange(90), 0])
+    line_axes = (1, random.randrange(length_range, 2*length_range), 1)
+    line_angle = np.deg2rad([random.randrange(90), 0, 0])
     line_opacity = 0.9
 
     overlay = drawing.make_ellipsoid_image((D, W, H), line_center, line_axes, line_angle)
@@ -226,18 +226,24 @@ def to_np(data, PATH='./'):
     np.save(PATH + 'ellipsoid_dataset.npy', data)
 
 
-def to_tif(data, PATH='./', type='perpendicular'):
+def to_tif(data, PATH='./', type='xy'):
     """
     Create a .tif file for each element of data in PATH. The name of each .tif file will be ellipsoid_dataset_i.tif where
     i is an increasing counter.
 
     :param data: ndarray, the file containing the dataset
     :param PATH: str, the PATH in where the file will be saved
+    :param type: str, visualization type. Available types:
+            - xy
+            - yt
+            - xt
     :return: None
     """
     import tifffile as tif
     for i in range(data.shape[0]):
-        if type == 'perpendicular':
-            tif.imsave(PATH + 'ellipsoid_dataset_'+ str(i) + '.tif', np.transpose(data[i], (2, 0, 1)))
-        elif type == 'parallel':
-            tif.imsave(PATH + 'ellipsoid_dataset_' + str(i) + '_parallel.tif', np.transpose(data[i], (1, 0, 2)))
+        if type == 'xy':
+            tif.imsave(PATH + 'ellipsoid_dataset_'+ str(i) + '_xy.tif', np.transpose(data[i], (2, 0, 1)))
+        elif type == 'yt':
+            tif.imsave(PATH + 'ellipsoid_dataset_' + str(i) + '_yt.tif', data[i])
+        elif type == 'xt':
+            tif.imsave(PATH + 'ellipsoid_dataset_'+ str(i) + '_xt.tif', np.transpose(data[i], (1, 0, 2)))
