@@ -9,7 +9,7 @@ def show3d(img):
     :param img: ndarray, the image
     :return: None
     """
-    img = np.transpose(img, (2, 1, 0))
+    img = np.transpose(img, (2, 0, 1))
     d = img.shape[0]
 
     _, axes = plt.subplots(nrows=d//5, ncols=5, figsize=(16, 14))
