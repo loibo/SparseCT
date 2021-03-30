@@ -8,15 +8,15 @@ from PIL import Image
 This file contains an example on how to generate the dataset from the functions in this library.
 """
 
-PATH = './SparseCT/'
+PATH = './SparseCT/tiff/'
 TO_PATH = './SparseCT/data/'
 LOAD = False
 
 if not LOAD:
-    ellipsoid_data = data.get_data((3, 600, 450, 32))
-    data.to_tif(ellipsoid_data, PATH, type='xy')
-    data.to_tif(ellipsoid_data, PATH, type='yt')
-    data.to_tif(ellipsoid_data, PATH, type='xt')
+    ellipsoid_data = data.get_data((30, 512, 512, 32))
+    # data.to_tif(ellipsoid_data, PATH, type='xy')
+    # data.to_tif(ellipsoid_data, PATH, type='yt')
+    #  data.to_tif(ellipsoid_data, PATH, type='xt')
     data.to_np(ellipsoid_data, PATH)
 else:
     ellipsoid_data = np.load(PATH + 'ellipsoid_dataset.npy')
